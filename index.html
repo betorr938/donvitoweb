@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pizzería Don Vito — App Cliente</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --card: #ffffff;
+      --ink: #1d1b19;
+      --muted: #666059;
+      --accent: #b8291e;
+      --accent-dark: #931f16;
+      --accent-soft: #fdeceb;
+      --ok: #1b7849;
+      --ok-soft: #e6f5ec;
+      --warn: #965700;
+      --warn-soft: #fff3dc;
+      --info: #185a8a;
+      --info-soft: #e6f2fb;
+      --line: #e4ddd2;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding-bottom: 92px;
+    }
+
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .brand small {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .status-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .pill-open { background: var(--ok-soft); color: var(--ok); }
+    .pill-closed { background: var(--accent-soft); color: var(--accent); }
+    .pill-delay { background: var(--info-soft); color: var(--info); }
+
+    .container {
+      max-width: 960px;
+      margin: 14px auto;
+      padding: 0 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px;
+      margin-bottom: 14px;
+    }
+
+    .install-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #fffdf9;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .cat-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      border: 1px solid var(--line);
+      background: #faf8f5;
+      color: var(--ink);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .cat-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .half-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-ok { background: var(--ok); color: #fff; }
+    .btn-warn { background: #c97a00; color: #fff; }
+    .btn-soft { background: #eee8de; color: var(--ink); }
+    .btn-outline { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .prod-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px;
+      background: #fcfbf9;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .prod-card.paused {
+      opacity: 0.6;
+    }
+
+    .prod-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .prod-price {
+      font-weight: 800;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .prod-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin: 4px 0 0;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .totals-box {
+      background: #faf8f5;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 11px;
+      margin-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .radio-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .radio-row input {
+      width: auto;
+    }
+
+    .transfer-box {
+      background: #f4f8fc;
+      border: 1px solid #cfe0ef;
+      border-radius: 11px;
+      padding: 11px;
+      margin-top: 8px;
+    }
+
+    .order-history-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fcfbf9;
+    }
+
+    .chat-box {
+      background: #f3f0ea;
+      border-radius: 10px;
+      padding: 9px 10px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+
+    .chat-msg {
+      margin-bottom: 4px;
+    }
+
+    .chat-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .chat-row input {
+      flex: 1;
+    }
+
+    .cancel-box {
+      background: var(--warn-soft);
+      border: 1px solid #edd29d;
+      border-radius: 10px;
+      padding: 9px 10px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--line);
+      padding: 10px 16px;
+      z-index: 25;
+    }
+
+    .sticky-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      z-index: 40;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      max-width: 560px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 16px;
+      border: 1px solid var(--line);
+    }
+
+    .msg-error { color: var(--accent); font-weight: 700; font-size: 0.86rem; margin-top: 6px; }
+    .msg-ok { color: var(--ok); font-weight: 700; font-size: 0.86rem; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1>🍕 Pizzería Don Vito</h1>
+        <small id="headerSchedule">Mar a Dom • 19:30 a 23:00 • Pedidos y Retiro</small>
+      </div>
+      <div class="status-pills">
+        <span id="storeStatusPill" class="pill pill-open">Abierto</span>
+        <span id="storeDelayPill" class="pill pill-delay">Demora aprox.: 15 min</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="card install-banner">
+      <div>
+        <strong>Tené Don Vito a mano en tu celular</strong>
+        <div style="font-size:0.84rem;color:var(--muted);">En Android: tocá el menú o <em>Agregar a pantalla principal</em>. En iPhone: <em>Compartir</em> → <em>Agregar a inicio</em>.</div>
+      </div>
+      <button class="btn btn-soft" type="button" onclick="openInstallModal()">Cómo guardar</button>
+    </section>
+
+    <section class="card">
+      <div class="search-row">
+        <input id="searchInput" type="text" autocomplete="off" placeholder="Buscar por nombre o ingrediente (ej: muzzarella, calabresa, jamón)..." oninput="renderMenu()" />
+      </div>
+      <div id="categoryTabs" class="cat-tabs"></div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 6px;font-size:1.05rem;">🍕 Armá tu Pizza Mitad y Mitad</h2>
+      <div style="font-size:0.85rem;color:var(--muted);">Elegí dos gustos de pizza (se cobra el valor de la mitad más cara).</div>
+      <div class="half-grid">
+        <div>
+          <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:4px;">Primera mitad</label>
+          <select id="halfOneSelect" onchange="updateHalfPreview()"></select>
+        </div>
+        <div>
+          <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:4px;">Segunda mitad</label>
+          <select id="halfTwoSelect" onchange="updateHalfPreview()"></select>
+        </div>
+      </div>
+      <div id="halfPreviewText" style="margin-top:8px;font-size:0.85rem;color:var(--muted);"></div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary" type="button" onclick="addHalfAndHalf()">Sumar Mitad y Mitad</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div id="menuContainer"></div>
+    </section>
+
+    <section id="cartSection" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <h2 style="margin:0;font-size:1.08rem;">Tu Pedido</h2>
+        <button class="btn btn-outline" type="button" onclick="clearCart()">Vaciar carrito</button>
+      </div>
+
+      <div id="cartItemsList" style="margin-top:8px;"></div>
+
+      <div class="totals-box">
+        <div>Subtotal: <strong id="cartSubtotal">$0</strong></div>
+        <div>Envío: <strong id="cartDelivery">$0</strong></div>
+        <div style="font-size:1.05rem;margin-top:4px;">Total a pagar: <strong id="cartTotal">$0</strong></div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-bottom:3px;">Tu nombre *</label>
+        <input id="clientName" type="text" autocomplete="off" placeholder="Ej: Lucía" />
+
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-top:8px;margin-bottom:3px;">Teléfono / WhatsApp *</label>
+        <input id="clientPhone" type="text" autocomplete="off" placeholder="Ej: 11 5555-1234" />
+
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-top:8px;margin-bottom:3px;">Entrega</label>
+        <div class="radio-row">
+          <label><input type="radio" name="deliveryType" value="Delivery" checked onchange="renderCart()" /> Envío a domicilio</label>
+          <label><input type="radio" name="deliveryType" value="Retiro" onchange="renderCart()" /> Retiro por el local (Sin cargo)</label>
+        </div>
+
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-top:8px;margin-bottom:3px;">Dirección / Aclaración de entrega</label>
+        <input id="clientAddress" type="text" autocomplete="off" placeholder="Calle, altura, timbre o piso..." />
+
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-top:8px;margin-bottom:3px;">Forma de pago</label>
+        <div class="radio-row">
+          <label><input type="radio" name="paymentMethod" value="Transferencia" checked onchange="toggleTransferBox()" /> Transferencia</label>
+          <label><input type="radio" name="paymentMethod" value="Efectivo" onchange="toggleTransferBox()" /> Efectivo</label>
+        </div>
+
+        <div id="transferBox" class="transfer-box">
+          <div style="font-weight:700;font-size:0.88rem;">Datos para transferir</div>
+          <div style="font-size:0.86rem;margin-top:3px;">Alias: <strong id="displayAlias">analia.simonelli</strong></div>
+          <label style="display:block;font-size:0.8rem;font-weight:700;margin-top:8px;margin-bottom:3px;">¿A nombre de quién sale / qué alias o dato querés dejar?</label>
+          <input id="transferSender" type="text" autocomplete="off" placeholder="Ej: Transferí desde Juan Pérez" />
+        </div>
+
+        <label style="display:block;font-size:0.82rem;font-weight:700;margin-top:8px;margin-bottom:3px;">Nota para la cocina (opcional)</label>
+        <input id="clientNote" type="text" autocomplete="off" placeholder="Ej: bien cocida, sin cebolla..." />
+
+        <div style="margin-top:12px;">
+          <button class="btn btn-primary" type="button" onclick="submitOrder()">Enviar pedido</button>
+        </div>
+        <div id="orderFeedback"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <h2 style="margin:0;font-size:1.05rem;">Mis pedidos y chat con el local</h2>
+        <button class="btn btn-outline" type="button" onclick="clearClientHistory()">Limpiar historial de compras</button>
+      </div>
+      <div id="clientOrdersHistory"></div>
+    </section>
+
+  </main>
+
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <div>
+        <strong id="stickySummary">0 productos • $0</strong>
+        <div style="font-size:0.78rem;color:var(--muted);">Se guarda solo si lo vaciás o terminás</div>
+      </div>
+      <button class="btn btn-primary" type="button" onclick="openOrdersModal()">Ver pedido</button>
+    </div>
+  </div>
+
+  <div id="ordersModal" class="modal-backdrop" onclick="if(event.target===this)closeOrdersModal()">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <h2 style="margin:0;font-size:1.08rem;">Seguimiento de pedidos y chat</h2>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-outline" type="button" onclick="clearClientHistory()">Limpiar historial</button>
+          <button class="btn btn-soft" type="button" onclick="closeOrdersModal()">Cerrar</button>
+        </div>
+      </div>
+      <div id="modalOrdersList" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div id="installModal" class="modal-backdrop" onclick="if(event.target===this)closeInstallModal()">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <h2 style="margin:0;font-size:1.05rem;">Guardar Don Vito en tu celular</h2>
+        <button class="btn btn-soft" type="button" onclick="closeInstallModal()">Cerrar</button>
+      </div>
+      <p style="font-size:0.9rem;line-height:1.45;margin-top:10px;">
+        <strong>Android:</strong> abrí el menú de Chrome (tres puntos) y elegí <em>Agregar a pantalla principal</em>.<br><br>
+        <strong>iPhone:</strong> tocá el botón <em>Compartir</em> y elegí <em>Agregar a inicio</em>.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const DB_URL = "https://pizzeria-don-vito-e8fd6-default-rtdb.firebaseio.com";
+    const HISTORY_STORAGE_KEY = "don_vito_cliente_historial_v1";
+
+    let config = {
+      isOpen: true,
+      schedule: "Mar a Dom • 19:30 a 23:00",
+      delayMinutes: 15,
+      deliveryFee: 2000,
+      alias: "analia.simonelli"
+    };
+
+    let menu = [
+      { id: "p1", cat: "Pizzas", name: "Pizza Muzzarella", price: 12000, desc: "Salsa de tomate, abundante queso muzzarella y orégano.", available: true },
+      { id: "p2", cat: "Pizzas", name: "Pizza Calabresa", price: 14500, desc: "Salsa de tomate, muzzarella y rodajas de longaniza calabresa.", available: true },
+      { id: "p3", cat: "Pizzas", name: "pizza jamon morron", price: 15000, desc: "salsa, muza,jamon,morron oregano", available: true },
+      { id: "e1", cat: "Empanadas", name: "Empanada Carne Cortada a Cuchillo", price: 1600, desc: "Carne picada a cuchillo, cebolla, morrón, verdeo y condimentos.", available: true },
+      { id: "m1", cat: "Milanesas", name: "Milanesa Completa con Papas", price: 13500, desc: "Milanesa de ternera o pollo, jamón, muzzarella, huevo frito y papas.", available: true }
+    ];
+
+    let selectedCategory = "Todas";
+    let cart = [];
+    let clientOrders = loadStoredHistory();
+    let isModalOpen = false;
+
+    const draftClientChats = {};
+    const draftCancelReasons = {};
+
+    function fmt(n) {
+      return "$" + Number(n || 0).toLocaleString("es-AR");
+    }
+
+    function loadStoredHistory() {
+      try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredHistory() {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(clientOrders));
+      } catch (e) {}
+    }
+
+    async function fbGet(path) {
+      const res = await fetch(`${DB_URL}/${path}.json`, { cache: "no-store" });
+      if (!res.ok) throw new Error("Error de conexión");
+      return res.json();
+    }
+
+    async function fbPost(path, data) {
+      const res = await fetch(`${DB_URL}/${path}.json`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Error al enviar");
+      return res.json();
+    }
+
+    async function fbPatch(path, data) {
+      const res = await fetch(`${DB_URL}/${path}.json`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Error al actualizar");
+      return res.json();
+    }
+
+    async function fbDelete(path) {
+      const res = await fetch(`${DB_URL}/${path}.json`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al borrar");
+      return res.json();
+    }
+
+    function hasActiveClientTextField() {
+      const active = document.activeElement;
+      if (!active || !active.classList) return false;
+      return active.classList.contains("client-chat-input") || active.classList.contains("client-cancel-input");
+    }
+
+    function applyStoreHeader() {
+      document.getElementById("headerSchedule").textContent = `${config.schedule || "Mar a Dom • 19:30 a 23:00"} • Pedidos y Retiro`;
+      const pill = document.getElementById("storeStatusPill");
+      if (config.isOpen !== false) {
+        pill.textContent = "Abierto";
+        pill.className = "pill pill-open";
+      } else {
+        pill.textContent = "Cerrado";
+        pill.className = "pill pill-closed";
+      }
+      document.getElementById("storeDelayPill").textContent = `Demora aprox.: ${config.delayMinutes || 15} min`;
+      document.getElementById("displayAlias").textContent = config.alias || "analia.simonelli";
+      renderCart();
+    }
+
+    function renderCategoryTabs() {
+      const cats = ["Todas", ...new Set(menu.map(m => m.cat))];
+      const wrap = document.getElementById("categoryTabs");
+      wrap.innerHTML = "";
+      cats.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cat-btn" + (selectedCategory === cat ? " active" : "");
+        btn.textContent = cat;
+        btn.onclick = () => {
+          selectedCategory = cat;
+          renderCategoryTabs();
+          renderMenu();
+        };
+        wrap.appendChild(btn);
+      });
+    }
+
+    function populateHalfSelects() {
+      const pizzas = menu.filter(m => String(m.cat).toLowerCase() === "pizzas");
+      const s1 = document.getElementById("halfOneSelect");
+      const s2 = document.getElementById("halfTwoSelect");
+      const prev1 = s1.value;
+      const prev2 = s2.value;
+
+      const optionsHtml = pizzas.map(p => `<option value="${p.id}">${p.name} (${fmt(p.price)})</option>`).join("");
+      s1.innerHTML = optionsHtml;
+      s2.innerHTML = optionsHtml;
+
+      if (prev1 && pizzas.some(p => p.id === prev1)) s1.value = prev1;
+      if (prev2 && pizzas.some(p => p.id === prev2)) s2.value = prev2;
+      else if (pizzas.length > 1) s2.value = pizzas[1].id;
+
+      updateHalfPreview();
+    }
+
+    function updateHalfPreview() {
+      const pizzas = menu.filter(m => String(m.cat).toLowerCase() === "pizzas");
+      const p1 = pizzas.find(p => p.id === document.getElementById("halfOneSelect").value) || pizzas[0];
+      const p2 = pizzas.find(p => p.id === document.getElementById("halfTwoSelect").value) || pizzas[1] || pizzas[0];
+      if (!p1 || !p2) return;
+      const price = Math.max(Number(p1.price || 0), Number(p2.price || 0));
+      document.getElementById("halfPreviewText").innerHTML =
+        `<strong>Precio: ${fmt(price)}</strong> (toma la mitad más cara) • Mitad 1 (${p1.name}): ${p1.desc || ""} • Mitad 2 (${p2.name}): ${p2.desc || ""}`;
+    }
+
+    function addHalfAndHalf() {
+      const pizzas = menu.filter(m => String(m.cat).toLowerCase() === "pizzas");
+      const p1 = pizzas.find(p => p.id === document.getElementById("halfOneSelect").value);
+      const p2 = pizzas.find(p => p.id === document.getElementById("halfTwoSelect").value);
+      if (!p1 || !p2) return;
+      if (p1.available === false || p2.available === false) {
+        alert("Uno de los gustos elegidos está pausado hoy.");
+        return;
+      }
+      const price = Math.max(Number(p1.price || 0), Number(p2.price || 0));
+      const id = `half_${p1.id}_${p2.id}`;
+      const name = `Mitad y Mitad: ${p1.name} / ${p2.name}`;
+      const desc = `1/2 ${p1.desc || p1.name} — 1/2 ${p2.desc || p2.name}`;
+      addToCart({ id, name, price, desc });
+    }
+
+    function renderMenu() {
+      const q = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+      const wrap = document.getElementById("menuContainer");
+      const filtered = menu.filter(item => {
+        const matchCat = selectedCategory === "Todas" || item.cat === selectedCategory;
+        const matchText = !q ||
+          String(item.name || "").toLowerCase().includes(q) ||
+          String(item.desc || "").toLowerCase().includes(q) ||
+          String(item.cat || "").toLowerCase().includes(q);
+        return matchCat && matchText;
+      });
+
+      if (!filtered.length) {
+        wrap.innerHTML = `<p style="color:var(--muted);">No se encontraron productos con esa búsqueda.</p>`;
+        return;
+      }
+
+      const grouped = {};
+      filtered.forEach(item => {
+        const c = item.cat || "Otros";
+        if (!grouped[c]) grouped[c] = [];
+        grouped[c].push(item);
+      });
+
+      wrap.innerHTML = Object.entries(grouped).map(([cat, items]) => `
+        <h3 style="margin:12px 0 8px;font-size:1rem;">${cat}</h3>
+        <div class="menu-grid">
+          ${items.map(item => {
+            const avail = item.available !== false;
+            return `
+              <div class="prod-card ${!avail ? "paused" : ""}">
+                <div>
+                  <div class="prod-top">
+                    <strong>${item.name}</strong>
+                    <span class="prod-price">${fmt(item.price)}</span>
+                  </div>
+                  <p class="prod-desc">${item.desc || ""}</p>
+                </div>
+                <div>
+                  ${avail
+                    ? `<button class="btn btn-primary" type="button" onclick="addToCart({ id: '${item.id}', name: '${String(item.name).replace(/'/g, "\\'")}', price: ${Number(item.price || 0)}, desc: '${String(item.desc || "").replace(/'/g, "\\'")}' })">Agregar al pedido</button>`
+                    : `<span class="pill pill-closed">Pausado por hoy</span>`}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `).join("");
+    }
+
+    function addToCart(prod) {
+      const existing = cart.find(i => i.id === prod.id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...prod, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function changeQty(id, delta) {
+      const idx = cart.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) {
+        cart.splice(idx, 1);
+      }
+      renderCart();
+    }
+
+    function clearCart() {
+      cart = [];
+      renderCart();
+    }
+
+    function toggleTransferBox() {
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Transferencia";
+      document.getElementById("transferBox").style.display = method === "Transferencia" ? "block" : "none";
+    }
+
+    function renderCart() {
+      toggleTransferBox();
+      const list = document.getElementById("cartItemsList");
+      if (!cart.length) {
+        list.innerHTML = `<p style="color:var(--muted);font-size:0.9rem;">Tu carrito está vacío. Agregá productos desde el menú.</p>`;
+      } else {
+        list.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div>
+              <strong>${item.name}</strong>
+              <div style="font-size:0.8rem;color:var(--muted);">${item.desc || ""} — ${fmt(item.price)} c/u</div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn" type="button" onclick="changeQty('${item.id}', -1)">-</button>
+              <strong>${item.qty}</strong>
+              <button class="qty-btn" type="button" onclick="changeQty('${item.id}', 1)">+</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      const subtotal = cart.reduce((s, i) => s + Number(i.price || 0) * Number(i.qty || 1), 0);
+      const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value || "Delivery";
+      const delivery = cart.length > 0 && deliveryType === "Delivery" ? Number(config.deliveryFee || 0) : 0;
+      const total = subtotal + delivery;
+      const count = cart.reduce((s, i) => s + Number(i.qty || 1), 0);
+
+      document.getElementById("cartSubtotal").textContent = fmt(subtotal);
+      document.getElementById("cartDelivery").textContent = fmt(delivery);
+      document.getElementById("cartTotal").textContent = fmt(total);
+      document.getElementById("stickySummary").textContent = `${count} ${count === 1 ? "producto" : "productos"} • ${fmt(total)}`;
+    }
+
+    async function submitOrder() {
+      const fb = document.getElementById("orderFeedback");
+      fb.className = "";
+      fb.textContent = "";
+
+      if (config.isOpen === false) {
+        fb.className = "msg-error";
+        fb.textContent = "El local figura cerrado en este momento.";
+        return;
+      }
+      if (!cart.length) {
+        fb.className = "msg-error";
+        fb.textContent = "Agregá al menos un producto al pedido.";
+        return;
+      }
+
+      const name = (document.getElementById("clientName").value || "").trim();
+      const phone = (document.getElementById("clientPhone").value || "").trim();
+      const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value || "Delivery";
+      const address = (document.getElementById("clientAddress").value || "").trim();
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Transferencia";
+      const transferSender = (document.getElementById("transferSender").value || "").trim();
+      const note = (document.getElementById("clientNote").value || "").trim();
+
+      if (!name || !phone) {
+        fb.className = "msg-error";
+        fb.textContent = "Completá tu nombre y teléfono / WhatsApp.";
+        return;
+      }
+
+      const subtotal = cart.reduce((s, i) => s + Number(i.price || 0) * Number(i.qty || 1), 0);
+      const deliveryFee = deliveryType === "Delivery" ? Number(config.deliveryFee || 0) : 0;
+      const total = subtotal + deliveryFee;
+      const code = "DV-" + Math.floor(1000 + Math.random() * 9000);
+      const now = new Date();
+
+      const orderPayload = {
+        code,
+        timestamp: Date.now(),
+        createdAt: now.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
+        status: "Esperando confirmación del local",
+        paymentVerified: false,
+        client: {
+          name,
+          phone,
+          deliveryType,
+          address: deliveryType === "Delivery" ? (address || "A confirmar") : "Retira por el local",
+          paymentMethod,
+          transferSender: paymentMethod === "Transferencia" ? transferSender : "",
+          note
+        },
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        deliveryFee,
+        total,
+        chat: [
+          {
+            sender: "client",
+            text: `Pedido #${code} enviado (${deliveryType}).`,
+            time: now.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })
+          }
+        ]
+      };
+
+      try {
+        const res = await fbPost("pedidos_web", orderPayload);
+        const fbKey = res?.name || ("local_" + Date.now());
+        const savedOrder = { ...orderPayload, fbKey };
+        clientOrders.unshift(savedOrder);
+        saveStoredHistory();
+
+        cart = [];
+        document.getElementById("clientNote").value = "";
+        document.getElementById("transferSender").value = "";
+        renderCart();
+        renderClientOrders();
+
+        fb.className = "msg-ok";
+        fb.textContent = `✓ Pedido #${code} enviado al local.`;
+      } catch (e) {
+        fb.className = "msg-error";
+        fb.textContent = "No se pudo enviar el pedido. Revisá la conexión.";
+      }
+    }
+
+    function buildOrderCardElement(order) {
+      const key = order.fbKey;
+      const div = document.createElement("div");
+      div.className = "order-history-card";
+
+      const itemsSummary = (order.items || []).map(i => `${i.qty}x ${i.name}`).join(" • ");
+      const chatArr = Array.isArray(order.chat) ? order.chat : [];
+      const chatHtml = chatArr.length
+        ? chatArr.map(m => `<div class="chat-msg"><strong>${m.sender === "local" ? "Don Vito" : "Vos"}:</strong> ${m.text}</div>`).join("")
+        : `<div class="chat-msg" style="color:var(--muted);">Sin mensajes todavía.</div>`;
+
+      const canCancel = order.status !== "Cancelado";
+      const cancelRequestHtml = order.cancelRequest?.reason
+        ? `<div style="margin-bottom:6px;"><strong>Motivo enviado:</strong> "${order.cancelRequest.reason}"</div>`
+        : "";
+
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <strong>Pedido #${order.code}</strong>
+          <span class="pill ${order.status === "Cancelado" ? "pill-closed" : "pill-delay"}">${order.status || "Enviado"}</span>
+        </div>
+        <div style="font-size:0.86rem;margin-top:4px;">${itemsSummary} — <strong>Total: ${fmt(order.total)}</strong></div>
+
+        <div class="chat-box">
+          <div>${chatHtml}</div>
+          <div class="chat-row">
+            <input type="text" class="client-chat-input" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Escribí un mensaje al local..." />
+            <button class="btn btn-soft client-chat-send-btn" type="button">Enviar</button>
+          </div>
+        </div>
+
+        ${canCancel ? `
+          <div class="cancel-box">
+            ${cancelRequestHtml}
+            <div><strong>Cancelar pedido / motivo de cancelación:</strong></div>
+            <div class="chat-row">
+              <input type="text" class="client-cancel-input" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Escribí el motivo de cancelación..." />
+              <button class="btn btn-warn client-cancel-send-btn" type="button">Enviar cancelación</button>
+            </div>
+          </div>
+        ` : ""}
+      `;
+
+      const chatInput = div.querySelector(".client-chat-input");
+      const chatSendBtn = div.querySelector(".client-chat-send-btn");
+
+      if (chatInput) {
+        chatInput.value = draftClientChats[key] || "";
+        chatInput.addEventListener("input", () => {
+          draftClientChats[key] = chatInput.value;
+        });
+        chatInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const text = chatInput.value;
+            draftClientChats[key] = "";
+            chatInput.value = "";
+            sendClientChatMessage(key, text);
+          }
+        });
+      }
+
+      if (chatSendBtn && chatInput) {
+        chatSendBtn.addEventListener("click", () => {
+          const text = chatInput.value;
+          draftClientChats[key] = "";
+          chatInput.value = "";
+          sendClientChatMessage(key, text);
+        });
+      }
+
+      const cancelInput = div.querySelector(".client-cancel-input");
+      const cancelSendBtn = div.querySelector(".client-cancel-send-btn");
+
+      if (cancelInput) {
+        cancelInput.value = draftCancelReasons[key] !== undefined
+          ? draftCancelReasons[key]
+          : (order.cancelRequest?.reason || "");
+        cancelInput.addEventListener("input", () => {
+          draftCancelReasons[key] = cancelInput.value;
+        });
+        cancelInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            submitClientCancelReason(key, cancelInput.value);
+          }
+        });
+      }
+
+      if (cancelSendBtn && cancelInput) {
+        cancelSendBtn.addEventListener("click", () => {
+          submitClientCancelReason(key, cancelInput.value);
+        });
+      }
+
+      return div;
+    }
+
+    function renderClientOrders() {
+      const historyWrap = document.getElementById("clientOrdersHistory");
+      const modalWrap = document.getElementById("modalOrdersList");
+
+      if (!clientOrders.length) {
+        const emptyHtml = `<p style="color:var(--muted);font-size:0.88rem;margin:0;">Todavía no tenés pedidos en el historial.</p>`;
+        historyWrap.innerHTML = emptyHtml;
+        if (modalWrap) modalWrap.innerHTML = emptyHtml;
+        return;
+      }
+
+      historyWrap.innerHTML = "";
+      if (modalWrap) modalWrap.innerHTML = "";
+
+      clientOrders.forEach(order => {
+        historyWrap.appendChild(buildOrderCardElement(order));
+        if (modalWrap) modalWrap.appendChild(buildOrderCardElement(order));
+      });
+    }
+
+    async function sendClientChatMessage(fbKey, text) {
+      const clean = String(text || "").trim();
+      if (!clean) return;
+      const order = clientOrders.find(o => o.fbKey === fbKey);
+      if (!order) return;
+
+      draftClientChats[fbKey] = "";
+      const time = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+      const updatedChat = [...(Array.isArray(order.chat) ? order.chat : []), { sender: "client", text: clean, time }];
+      order.chat = updatedChat;
+      saveStoredHistory();
+      renderClientOrders();
+
+      try {
+        await fbPatch(`pedidos_web/${fbKey}`, { chat: updatedChat });
+      } catch (e) {}
+    }
+
+    async function submitClientCancelReason(fbKey, reasonText) {
+      const cleanReason = String(reasonText || "").trim();
+      if (!cleanReason) {
+        alert("Escribí el motivo de la cancelación.");
+        return;
+      }
+      const order = clientOrders.find(o => o.fbKey === fbKey);
+      if (!order) return;
+
+      draftCancelReasons[fbKey] = "";
+      const time = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+      const cancelRequest = {
+        ...(order.cancelRequest || {}),
+        reason: cleanReason,
+        approved: false,
+        requestedAt: time
+      };
+      const updatedChat = [
+        ...(Array.isArray(order.chat) ? order.chat : []),
+        { sender: "client", text: `Solicitud de cancelación. Motivo: ${cleanReason}`, time }
+      ];
+
+      order.cancelRequest = cancelRequest;
+      order.chat = updatedChat;
+      saveStoredHistory();
+      renderClientOrders();
+
+      try {
+        await fbPatch(`pedidos_web/${fbKey}`, { cancelRequest, chat: updatedChat });
+      } catch (e) {}
+    }
+
+    async function clearClientHistory() {
+      if (!clientOrders.length) {
+        alert("El historial de compras ya está vacío.");
+        return;
+      }
+      if (!confirm("¿Limpiar el historial de compras?")) return;
+
+      const keysToRemove = clientOrders.map(o => o.fbKey).filter(k => k && !String(k).startsWith("local_"));
+      clientOrders = [];
+      saveStoredHistory();
+      Object.keys(draftClientChats).forEach(k => { draftClientChats[k] = ""; });
+      Object.keys(draftCancelReasons).forEach(k => { draftCancelReasons[k] = ""; });
+      renderClientOrders();
+
+      for (const k of keysToRemove) {
+        try {
+          await fbDelete(`pedidos_web/${k}`);
+        } catch (e) {}
+      }
+    }
+
+    function openOrdersModal() {
+      isModalOpen = true;
+      renderClientOrders();
+      document.getElementById("ordersModal").classList.add("open");
+    }
+
+    function closeOrdersModal() {
+      isModalOpen = false;
+      document.getElementById("ordersModal").classList.remove("open");
+    }
+
+    function openInstallModal() {
+      document.getElementById("installModal").classList.add("open");
+    }
+
+    function closeInstallModal() {
+      document.getElementById("installModal").classList.remove("open");
+    }
+
+    async function syncClientData() {
+      try {
+        const [rawCfg, rawMenu, rawOrders] = await Promise.all([
+          fbGet("config_local"),
+          fbGet("menu_web"),
+          fbGet("pedidos_web")
+        ]);
+
+        if (rawCfg && typeof rawCfg === "object") {
+          config = { ...config, ...rawCfg };
+          applyStoreHeader();
+        }
+
+        if (rawMenu) {
+          const list = Array.isArray(rawMenu) ? rawMenu.filter(Boolean) : Object.values(rawMenu).filter(Boolean);
+          if (list.length > 0) {
+            menu = list;
+            renderCategoryTabs();
+            populateHalfSelects();
+            renderMenu();
+          }
+        }
+
+        if (rawOrders && typeof rawOrders === "object") {
+          const remoteMap = {};
+          Object.entries(rawOrders).forEach(([k, v]) => {
+            if (v) remoteMap[k] = { ...v, fbKey: v.fbKey || k };
+          });
+
+          clientOrders = clientOrders.map(localOrd => {
+            const rem = remoteMap[localOrd.fbKey];
+            return rem ? { ...localOrd, ...rem, fbKey: localOrd.fbKey } : localOrd;
+          });
+          saveStoredHistory();
+        }
+
+        if (!hasActiveClientTextField()) {
+          renderClientOrders();
+        }
+      } catch (e) {}
+    }
+
+    renderCategoryTabs();
+    populateHalfSelects();
+    renderMenu();
+    applyStoreHeader();
+    renderClientOrders();
+    syncClientData();
+    setInterval(syncClientData, 6000);
+  </script>
+</body>
+</html>
